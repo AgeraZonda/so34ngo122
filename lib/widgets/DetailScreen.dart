@@ -1,14 +1,26 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:so34ngo122/models/Expense.dart';
 import 'package:provider/provider.dart';
+import 'package:so34ngo122/models/WhoUse.dart';
 
 class DetailScreen extends StatelessWidget {
   // Declare a field that holds the Expense.
   final Expense expense;
-
+  // Map<String, bool> listResult = new Map<String, bool>();
+  List<String> listName = new List<String>();
+  List<WhoUse> listWhoUse = new List<WhoUse>();
   // In the constructor, require a Expense.
-  DetailScreen({Key key, @required this.expense}) : super(key: key);
-
+  DetailScreen({Key key, @required this.expense}) {
+    var tagsJson = jsonDecode(expense.whoUse)['whoUse'];
+    List<String> tags = tagsJson != null ? List.from(tagsJson) : null;
+    tags.map((e) => {listWhoUse.add(WhoUse.fromJson(json))});
+    // listResult = list;
+    listWhoUse.forEach((key) {
+      listName.add(key.name);
+    });
+  }
   @override
   Widget build(BuildContext context) {
     // Use the Expense to create the UI.
@@ -33,7 +45,12 @@ class DetailScreen extends StatelessWidget {
                 return Text('Người Thêm: ' + name,
                     style: Theme.of(context).textTheme.headline4);
               },
-            )
+            ),
+            Column(
+                children: listName
+                    .map((e) => Text('Người Thêm: ' + e,
+                        style: Theme.of(context).textTheme.headline4))
+                    .toList())
           ]),
         ));
   }

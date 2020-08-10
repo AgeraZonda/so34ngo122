@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:group_radio_button/group_radio_button.dart';
+import 'package:so34ngo122/models/WhoUse.dart';
 import 'package:so34ngo122/services/DatabaseService.dart';
 
 class AddForm extends StatefulWidget {
@@ -27,12 +31,7 @@ class AddFromState extends State<AddForm> {
   final _dateTextController = TextEditingController();
 
   //double _formProgress = 0;
-  AddFromState() {
-    DateTime today = new DateTime.now();
-    String dateSlug =
-        "${today.year.toString()}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
-    _dateTextController.text = dateSlug;
-  }
+
   void _updateFormProgress() {
     var progress = 0.0;
     var controllers = [
@@ -56,16 +55,35 @@ class AddFromState extends State<AddForm> {
     Navigator.pop(context);
   }
 
-  Future addExpense(
-      String title, int price, String description, String date) async {
+  Future addExpense(String title, int price, String description, String date,
+      String whoUse) async {
     try {
-      await DatabaseService().addExpense(title, price, description, date);
+      await DatabaseService()
+          .addExpense(title, price, description, date, whoUse);
     } catch (error) {
       print(error.toString());
       return null;
     }
   }
 
+  List<String> _nickname = new List<String>();
+
+  Map<String, bool> listResult = new Map<String, bool>();
+  int currentValue = 0;
+  int groupId = 0;
+  AddFromState() {
+    _nickname.add('agera');
+    _nickname.add('vy');
+    _nickname.add('anh');
+    _nickname.add('duy');
+    DateTime today = new DateTime.now();
+    String dateSlug =
+        "${today.year.toString()}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+    _dateTextController.text = dateSlug;
+    for (String name in _nickname) {
+      listResult.addAll({name: true});
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -108,14 +126,36 @@ class AddFromState extends State<AddForm> {
             color: Colors.blue,
             textColor: Colors.white,
             onPressed: () async {
+              String a = '[';
+              listResult.forEach((key, value) {
+                a += '{"${key}":${value}},';
+              });
+              a = a.substring(0, a.length - 1);
+              a += ']';
               dynamic result = await addExpense(
                   _titleTextController.text,
                   int.parse(_priceTextController.text),
                   _descriptionTextController.text,
-                  _dateTextController.text);
+                  _dateTextController.text,
+                  '{"whoUse":' + a + '}');
             },
             child: Text('Thêm luôn'),
           ),
+          Column(
+            children: _nickname
+                .map(
+                  (item) => CheckboxListTile(
+                      title: Text(item),
+                      value: listResult[item],
+                      activeColor: Colors.green,
+                      onChanged: (bool newValue) {
+                        setState(() {
+                          listResult[item] = !listResult[item];
+                        });
+                      }),
+                )
+                .toList(),
+          )
         ],
       ),
     );

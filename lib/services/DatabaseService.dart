@@ -13,13 +13,14 @@ class DatabaseService {
   final CollectionReference userCollection =
       Firestore.instance.collection('users');
 
-  Future<void> addExpense(
-      String title, int price, String description, String date) async {
+  Future<void> addExpense(String title, int price, String description,
+      String date, String whoUse) async {
     return await expenseCollection.add({
       'title': title,
       'price': price,
       'description': description,
       'date': date,
+      'whoUse': whoUse,
     }).catchError((error) => print("Failed to add expense: $error"));
     ;
   }
@@ -42,6 +43,7 @@ class DatabaseService {
               doc.data['price'],
               doc.data['description'],
               doc.data['date'],
+              doc.data['whoUse'],
             ))
         .toList();
   }

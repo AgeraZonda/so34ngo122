@@ -3,6 +3,8 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
+import 'package:loading/indicator/ball_pulse_indicator.dart';
+import 'package:loading/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:so34ngo122/services/AuthService.dart';
@@ -61,11 +63,16 @@ class _MyAppState extends State<MyApp> {
     return Provider<String>.value(
       value: name,
       child: MaterialApp(
-        home: listExpense.length != 0
-            ? (isLoggedIn
-                ? ExpensesScreen(expenses: listExpense)
-                : LoginScreen())
-            : Text('loading'),
+        home: listExpense.length != 1
+            ? (true ? ExpensesScreen(expenses: listExpense) : LoginScreen())
+            : Container(
+                child: Center(
+                  child: Loading(
+                      indicator: BallPulseIndicator(),
+                      size: 100.0,
+                      color: Colors.blue),
+                ),
+              ),
       ),
     );
   }
