@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:so34ngo122/models/Expense.dart';
+import 'package:so34ngo122/models/User.dart';
 
 // import 'package:http/http.dart' as http;
 // import 'package:http/http.dart';
@@ -9,24 +10,30 @@ class DatabaseService {
   // collection reference
   final CollectionReference expenseCollection =
       Firestore.instance.collection('expenses');
+  final CollectionReference userCollection =
+      Firestore.instance.collection('users');
 
   Future<void> addExpense(
       String title, int price, String description, String date) async {
-    return await expenseCollection
-        .add({
-          'title': title,
-          'price': price,
-          'description': description,
-          'date': date,
-        })
-        .then((value) => print("Added"))
-        .catchError((error) => print("Failed to add user: $error"));
+    return await expenseCollection.add({
+      'title': title,
+      'price': price,
+      'description': description,
+      'date': date,
+    }).catchError((error) => print("Failed to add expense: $error"));
+    ;
+  }
+
+  Future<void> addUser(String name, int wallet) async {
+    return await userCollection.add({
+      'name': name,
+      'wallet': wallet,
+    }).catchError((error) => print("Failed to add user: $error"));
     ;
   }
 
   Future<List<Expense>> getListExpense() async {
-    QuerySnapshot qShot =
-        await Firestore.instance.collection('expenses').getDocuments();
+    QuerySnapshot qShot = await expenseCollection.getDocuments();
 
     return qShot.documents
         .map((doc) => Expense(
@@ -35,6 +42,17 @@ class DatabaseService {
               doc.data['price'],
               doc.data['description'],
               doc.data['date'],
+            ))
+        .toList();
+  }
+
+  Future<List<User>> getListUser() async {
+    QuerySnapshot qShot = await userCollection.getDocuments();
+
+    return qShot.documents
+        .map((doc) => User(
+              doc.data['name'],
+              doc.data['wallet'],
             ))
         .toList();
   }

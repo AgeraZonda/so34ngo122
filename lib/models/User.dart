@@ -1,5 +1,6 @@
 class User {
-  final String uid;
+  final String name;
+  final int wallet;
 
-  User({this.uid});
+  User(this.name, this.wallet);
 }

@@ -26,7 +26,6 @@ class ExpensesScreen extends StatelessWidget {
               // Notice that you're not only creating a DetailScreen, you're
               // also passing the current expense through to it.
               onTap: () {
-                print('hello');
                 Navigator.push(
                   context,
                   MaterialPageRoute(

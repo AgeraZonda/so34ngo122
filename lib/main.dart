@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:so34ngo122/services/AuthService.dart';
 import 'package:so34ngo122/services/DatabaseService.dart';
 import 'package:so34ngo122/widgets/ExpensesScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:so34ngo122/widgets/loginScreen.dart';
 //import 'package:firebase_core/firebase_core.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -26,6 +28,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool isLoading = true;
+  bool isLoggedIn = false;
+  String name = '';
   List<Expense> listExpense = List<Expense>();
   Future<List<Expense>> getListExpense() async {
     List<Expense> tasks = await DatabaseService().getListExpense();
@@ -33,18 +37,34 @@ class _MyAppState extends State<MyApp> {
     return tasks;
   }
 
+  void autoLogIn() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String userId = prefs.getString('username');
+
+    if (userId != null) {
+      setState(() {
+        isLoggedIn = true;
+        name = userId;
+      });
+      return;
+    }
+  }
+
   _MyAppState() {
+    autoLogIn();
     getListExpense().then((value) => setState(() {
           listExpense = value;
         }));
   }
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<User>.value(
-      value: AuthService().user,
+    return Provider<String>.value(
+      value: name,
       child: MaterialApp(
         home: listExpense.length != 0
-            ? ExpensesScreen(expenses: listExpense)
+            ? (isLoggedIn
+                ? ExpensesScreen(expenses: listExpense)
+                : LoginScreen())
             : Text('loading'),
       ),
     );
