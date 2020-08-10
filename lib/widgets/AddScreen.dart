@@ -21,20 +21,26 @@ class AddScreen extends StatelessWidget {
 }
 
 class AddFromState extends State<AddForm> {
-  final _firstNameTextController = TextEditingController();
-  final _lastNameTextController = TextEditingController();
-  final _usernameTextController = TextEditingController();
+  final _titleTextController = TextEditingController();
+  final _priceTextController = TextEditingController();
+  final _descriptionTextController = TextEditingController();
+  final _dateTextController = TextEditingController();
 
   //double _formProgress = 0;
-
+  AddFromState() {
+    DateTime today = new DateTime.now();
+    String dateSlug =
+        "${today.year.toString()}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+    _dateTextController.text = dateSlug;
+  }
   void _updateFormProgress() {
     var progress = 0.0;
     var controllers = [
-      _firstNameTextController,
-      _lastNameTextController,
-      _usernameTextController
+      _titleTextController,
+      _priceTextController,
+      _descriptionTextController,
+      _dateTextController
     ];
-
     for (var controller in controllers) {
       if (controller.value.text.isNotEmpty) {
         progress += 1 / controllers.length;
@@ -50,9 +56,10 @@ class AddFromState extends State<AddForm> {
     Navigator.pop(context);
   }
 
-  Future addExpense(String title, int price, String description) async {
+  Future addExpense(
+      String title, int price, String description, String date) async {
     try {
-      await DatabaseService(uid: '1').updateUserData(title, price, description);
+      await DatabaseService().addExpense(title, price, description, date);
     } catch (error) {
       print(error.toString());
       return null;
@@ -70,14 +77,14 @@ class AddFromState extends State<AddForm> {
           Padding(
             padding: EdgeInsets.all(8.0),
             child: TextFormField(
-              controller: _firstNameTextController,
+              controller: _titleTextController,
               decoration: InputDecoration(hintText: 'Mua cái gì vậy ?'),
             ),
           ),
           Padding(
             padding: EdgeInsets.all(8.0),
             child: TextFormField(
-              controller: _lastNameTextController,
+              controller: _priceTextController,
               decoration:
                   InputDecoration(hintText: 'Bao nhiêu tiền nhớ không ??'),
             ),
@@ -85,16 +92,27 @@ class AddFromState extends State<AddForm> {
           Padding(
             padding: EdgeInsets.all(8.0),
             child: TextFormField(
-              controller: _usernameTextController,
+              controller: _descriptionTextController,
               decoration: InputDecoration(hintText: 'NOTE: thường là phế =))'),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: _dateTextController,
+              decoration: InputDecoration(
+                  hintText: 'Chắc là hôm nay nhỉ, hôm khác thì điền'),
             ),
           ),
           FlatButton(
             color: Colors.blue,
             textColor: Colors.white,
             onPressed: () async {
-              dynamic result = await addExpense('thịt', 1000, 'kcogi');
-              print(result);
+              dynamic result = await addExpense(
+                  _titleTextController.text,
+                  int.parse(_priceTextController.text),
+                  _descriptionTextController.text,
+                  _dateTextController.text);
             },
             child: Text('Thêm luôn'),
           ),

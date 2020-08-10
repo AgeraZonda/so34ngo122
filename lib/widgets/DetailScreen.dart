@@ -12,13 +12,19 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use the Expense to create the UI.
     return Scaffold(
-      appBar: AppBar(
-        title: Text(expense.title),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Text(expense.description),
-      ),
-    );
+        appBar: AppBar(
+          title: Text(expense.title),
+        ),
+        body: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Text(expense.title, style: Theme.of(context).textTheme.headline4),
+            Text(expense.price.toString(),
+                style: Theme.of(context).textTheme.headline4),
+            Text(expense.description,
+                style: Theme.of(context).textTheme.headline4),
+            Text(expense.date, style: Theme.of(context).textTheme.headline4),
+          ]),
+        ));
   }
 }

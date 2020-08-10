@@ -3,121 +3,50 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
-
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:so34ngo122/services/AuthService.dart';
+import 'package:so34ngo122/services/DatabaseService.dart';
 import 'package:so34ngo122/widgets/ExpensesScreen.dart';
 //import 'package:firebase_core/firebase_core.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'models/Expense.dart';
+import 'models/User.dart';
 
-void main() {
-  runApp(MaterialApp(
-    home: ExpensesScreen(
-      expenses: List.generate(
-        20,
-        (i) => Expense(
-          '1',
-          'Expense $i',
-          5,
-          'A description of what needs to be done for Expense $i',
-        ),
-      ),
-    ),
-  ));
+void main() => runApp(MyApp());
+
+class MyApp extends StatefulWidget {
+  const MyApp({
+    Key key,
+  }) : super(key: key);
+  @override
+  _MyAppState createState() => _MyAppState();
 }
-// Future<void> main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   final FirebaseApp app = await FirebaseApp.configure(
-//     name: 'test',
-//     options: const FirebaseOptions(
-//       googleAppID: '1:234307915271:android:6af840d1e061fbc17c64a2',
-//       gcmSenderID: '234307915271',
-//       apiKey: 'AIzaSyB-p4BP3aoKanlgzGT1heSmriOHtCpsObg',
-//       projectID: 'so34ngo112',
-//     ),
-//   );
-//   final Firestore firestore = Firestore(app: app);
 
-//   runApp(MaterialApp(
-//       title: 'Firestore Example', home: MyHomePage(firestore: firestore)));
-// }
+class _MyAppState extends State<MyApp> {
+  bool isLoading = true;
+  List<Expense> listExpense = List<Expense>();
+  Future<List<Expense>> getListExpense() async {
+    List<Expense> tasks = await DatabaseService().getListExpense();
 
-//Future<void> main() async {
-//  WidgetsFlutterBinding.ensureInitialized();
-//  final FirebaseApp app = await FirebaseApp.configure(
-//    name: 'test',
-//    options: const FirebaseOptions(
-//      googleAppID: '1:960539170822:android:65096dc8a9d051158f4b87',
-//      gcmSenderID: '960539170822',
-//      apiKey: 'AIzaSyBHGZSlJeIWXxbJr9TKwuc2-CWlKeoj1iI',
-//      projectID: 'so34ngo122-700dc',
-//    ),
-//  );
-//  final Firestore firestore = Firestore(app: app);
-//  print(firestore);
-//  runApp(MaterialApp(
-//    title: 'Passing Data',
-//    home: ExpensesScreen(
-//      expenses: List.generate(
-//        20,
-//            (i) => Expense('1',
-//          'Expense $i',
-//          5,
-//          'A description of what needs to be done for Expense $i',
-//        ),
-//      ),
-//    ),
-//  ));
-//}
-////
-////void main() {
-////  Api _api =  Api();
-//////
-//////  List<Expense> expenses;
-//////
-//////
-//////  Future<List<Expense>> fetchExpenses() async {
-//////    var result = await _api.getDataCollection();
-//////    expenses = result.documents
-//////        .map((doc) => Expense.fromMap(doc.data, doc.documentID))
-//////        .toList();
-//////    return expenses;
-//////  }
-////  runApp(MaterialApp(
-////    title: 'Passing Data',
-////    home: ExpensesScreen(
-////      expenses: List.generate(
-////        20,
-////            (i) => Expense('1',
-////          'Expense $i',
-////          5,
-////          'A description of what needs to be done for Expense $i',
-////        ),
-////      ),
-////    ),
-////  ));
-////}
-//
-////void main() {
-////  setupLocator();
-////  runApp(MyApp());
-////}
-////
-////class MyApp extends StatelessWidget {
-////  @override
-////  Widget build(BuildContext context) {
-////    return MultiProvider(
-////      providers: [
-////        ChangeNotifierProvider(builder: (_) => locator<CRUDModel>()),
-////      ],
-////      child: MaterialApp(
-////        debugShowCheckedModeBanner: false,
-////        initialRoute: '/',
-////        title: 'Product App',
-////        theme: ThemeData(),
-////        onGenerateRoute: Router.generateRoute,
-////      ),
-////    );
-////  }
-////}
+    return tasks;
+  }
+
+  _MyAppState() {
+    getListExpense().then((value) => setState(() {
+          listExpense = value;
+        }));
+  }
+  @override
+  Widget build(BuildContext context) {
+    return StreamProvider<User>.value(
+      value: AuthService().user,
+      child: MaterialApp(
+        home: listExpense.length != 0
+            ? ExpensesScreen(expenses: listExpense)
+            : Text('loading'),
+      ),
+    );
+  }
+}
