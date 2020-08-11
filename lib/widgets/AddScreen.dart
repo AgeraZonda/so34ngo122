@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:group_radio_button/group_radio_button.dart';
 import 'package:so34ngo122/models/WhoUse.dart';
 import 'package:so34ngo122/services/DatabaseService.dart';
+import 'package:provider/provider.dart';
 
 class AddForm extends StatefulWidget {
   @override
@@ -66,6 +67,15 @@ class AddFromState extends State<AddForm> {
     }
   }
 
+  Future editUserWallet(String name, int wallet) async {
+    try {
+      await DatabaseService().editUserWallet(name, wallet);
+    } catch (error) {
+      print(error.toString());
+      return null;
+    }
+  }
+
   List<String> _nickname = new List<String>();
 
   Map<String, bool> listResult = new Map<String, bool>();
@@ -122,40 +132,64 @@ class AddFromState extends State<AddForm> {
                   hintText: 'Chắc là hôm nay nhỉ, hôm khác thì điền'),
             ),
           ),
-          FlatButton(
-            color: Colors.blue,
-            textColor: Colors.white,
-            onPressed: () async {
-              String a = '[';
-              listResult.forEach((key, value) {
-                a += '{"${key}":${value}},';
-              });
-              a = a.substring(0, a.length - 1);
-              a += ']';
-              dynamic result = await addExpense(
-                  _titleTextController.text,
-                  int.parse(_priceTextController.text),
-                  _descriptionTextController.text,
-                  _dateTextController.text,
-                  '{"whoUse":' + a + '}');
+          Consumer<String>(
+            //                    <--- Consumer
+            builder: (context, name, child) {
+              return FlatButton(
+                color: Colors.blue,
+                textColor: Colors.white,
+                onPressed: () async {
+                  String a = '[';
+                  int price = int.parse(_priceTextController.text);
+                  int countPeople = 0;
+                  listResult.forEach((key, value) {
+                    a += '{"name": "${key}", "isUse": ${value}},';
+                    if (value) countPeople++;
+                  });
+                  double priceForOtherPerson = price / countPeople;
+                  double priceForPerson = price - priceForOtherPerson;
+                  listResult.forEach((key, value) {
+                    if (value) {
+                      if (key == name)
+                        editUserWallet(key, priceForPerson.round());
+                      else
+                        editUserWallet(key, -priceForOtherPerson.round());
+                    }
+                  });
+                  a = a.substring(0, a.length - 1);
+                  a += ']';
+                  // dynamic halo = await editUserWallet('agera', 500);
+                  dynamic result = await addExpense(
+                      _titleTextController.text,
+                      int.parse(_priceTextController.text),
+                      _descriptionTextController.text,
+                      _dateTextController.text,
+                      '{"whoUse":' + a + '}');
+                },
+                child: Text('Thêm luôn'),
+              );
             },
-            child: Text('Thêm luôn'),
           ),
-          Column(
-            children: _nickname
-                .map(
-                  (item) => CheckboxListTile(
-                      title: Text(item),
-                      value: listResult[item],
-                      activeColor: Colors.green,
-                      onChanged: (bool newValue) {
-                        setState(() {
-                          listResult[item] = !listResult[item];
-                        });
-                      }),
-                )
-                .toList(),
-          )
+          Consumer<String>(
+              //                    <--- Consumer
+              builder: (context, name, child) {
+            return Column(
+              children: _nickname
+                  .map(
+                    (item) => CheckboxListTile(
+                        title: Text(name == item ? 'Bạn: ' + item : item),
+                        value: listResult[item],
+                        activeColor: Colors.green,
+                        onChanged: (bool newValue) {
+                          setState(() {
+                            if (name != item)
+                              listResult[item] = !listResult[item];
+                          });
+                        }),
+                  )
+                  .toList(),
+            );
+          }),
         ],
       ),
     );

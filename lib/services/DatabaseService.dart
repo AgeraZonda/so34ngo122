@@ -33,6 +33,22 @@ class DatabaseService {
     ;
   }
 
+  Future<void> editUserWallet(String name, int wallet) async {
+    var documentID = 'hello';
+    var currentWallet = 0;
+    await userCollection.getDocuments().then((querySnapshot) {
+      querySnapshot.documents.forEach((result) {
+        if (result.data['name'] == name) {
+          documentID = result.documentID;
+          currentWallet = result.data['wallet'];
+        }
+      });
+    });
+    return await userCollection
+        .document(documentID)
+        .setData({"name": name, "wallet": currentWallet + wallet});
+  }
+
   Future<List<Expense>> getListExpense() async {
     QuerySnapshot qShot = await expenseCollection.getDocuments();
 

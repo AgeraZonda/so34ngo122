@@ -33,8 +33,15 @@ class _MyAppState extends State<MyApp> {
   bool isLoggedIn = false;
   String name = '';
   List<Expense> listExpense = List<Expense>();
+  List<User> listUser = List<User>();
   Future<List<Expense>> getListExpense() async {
     List<Expense> tasks = await DatabaseService().getListExpense();
+
+    return tasks;
+  }
+
+  Future<List<User>> getListUser() async {
+    List<User> tasks = await DatabaseService().getListUser();
 
     return tasks;
   }
@@ -57,6 +64,9 @@ class _MyAppState extends State<MyApp> {
     getListExpense().then((value) => setState(() {
           listExpense = value;
         }));
+    getListUser().then((value) => setState(() {
+          listUser = value;
+        }));
   }
   @override
   Widget build(BuildContext context) {
@@ -64,7 +74,12 @@ class _MyAppState extends State<MyApp> {
       value: name,
       child: MaterialApp(
         home: listExpense.length != 1
-            ? (true ? ExpensesScreen(expenses: listExpense) : LoginScreen())
+            ? (true
+                ? ExpensesScreen(
+                    expenses: listExpense,
+                    listUser: listUser,
+                  )
+                : LoginScreen())
             : Container(
                 child: Center(
                   child: Loading(
