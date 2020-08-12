@@ -5,6 +5,7 @@ class Expense {
   final String description;
   final String date;
   final String whoUse;
+  final String whoMade;
   toJson() {
     return {
       "title": title,
@@ -15,5 +16,5 @@ class Expense {
   }
 
   Expense(this.id, this.title, this.price, this.description, this.date,
-      this.whoUse);
+      this.whoUse, this.whoMade);
 }

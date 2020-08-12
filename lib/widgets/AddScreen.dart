@@ -9,14 +9,16 @@ import 'package:provider/provider.dart';
 
 class AddForm extends StatefulWidget {
   final List<User> listUser;
-  AddForm(this.listUser);
+  final String name;
+  AddForm(this.listUser, this.name);
   @override
-  AddFromState createState() => AddFromState(listUser);
+  AddFromState createState() => AddFromState(listUser, name);
 }
 
 class AddScreen extends StatelessWidget {
   final List<User> listUser;
-  AddScreen(this.listUser);
+  final String name;
+  AddScreen(this.listUser, this.name);
   @override
   Widget build(BuildContext context) {
     // Use the Expense to create the UI.
@@ -24,7 +26,7 @@ class AddScreen extends StatelessWidget {
       appBar: AppBar(),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: AddForm(listUser),
+        child: AddForm(listUser, name),
       ),
     );
   }
@@ -32,7 +34,7 @@ class AddScreen extends StatelessWidget {
 
 class AddFromState extends State<AddForm> {
   final List<User> listUser;
-
+  final String name;
   final _titleTextController = TextEditingController();
   final _priceTextController = TextEditingController();
   final _descriptionTextController = TextEditingController();
@@ -63,7 +65,7 @@ class AddFromState extends State<AddForm> {
       String whoUse) async {
     try {
       await DatabaseService()
-          .addExpense(title, price, description, date, whoUse);
+          .addExpense(title, price, description, date, whoUse, name);
     } catch (error) {
       print(error.toString());
       return null;
@@ -84,7 +86,7 @@ class AddFromState extends State<AddForm> {
   Map<String, bool> listResult = new Map<String, bool>();
   int currentValue = 0;
   int groupId = 0;
-  AddFromState(this.listUser) {
+  AddFromState(this.listUser, this.name) {
     listUser.forEach((element) {
       _nickname.add(element.name);
     });

@@ -14,13 +14,14 @@ class DatabaseService {
       Firestore.instance.collection('users');
 
   Future<void> addExpense(String title, int price, String description,
-      String date, String whoUse) async {
+      String date, String whoUse, String whoMade) async {
     return await expenseCollection.add({
       'title': title,
       'price': price,
       'description': description,
       'date': date,
       'whoUse': whoUse,
+      'whoMade': whoMade,
     }).catchError((error) => print("Failed to add expense: $error"));
     ;
   }
@@ -54,13 +55,13 @@ class DatabaseService {
 
     return qShot.documents
         .map((doc) => Expense(
-              doc.data['id'],
-              doc.data['title'],
-              doc.data['price'],
-              doc.data['description'],
-              doc.data['date'],
-              doc.data['whoUse'],
-            ))
+            doc.data['id'],
+            doc.data['title'],
+            doc.data['price'],
+            doc.data['description'],
+            doc.data['date'],
+            doc.data['whoUse'],
+            doc.data['whoMade']))
         .toList();
   }
 

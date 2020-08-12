@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:so34ngo122/models/Expense.dart';
 import 'package:so34ngo122/models/User.dart';
 
@@ -19,23 +20,28 @@ class ExpensesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('Expenses'),
-        ),
-        body: ExpenseList(
-            expenses: expenses, listUser: listUser, setStates: setStates),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AddScreen(listUser),
-              ),
-            );
-          },
-          tooltip: 'Increment',
-          child: Icon(Icons.add),
-        ));
+    return Consumer<String>(
+      //                    <--- Consumer
+      builder: (context, name, child) {
+        return Scaffold(
+            appBar: AppBar(
+              title: Text('Expenses'),
+            ),
+            body: ExpenseList(
+                expenses: expenses, listUser: listUser, setStates: setStates),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddScreen(listUser, name),
+                  ),
+                );
+              },
+              tooltip: 'Increment',
+              child: Icon(Icons.add),
+            ));
+      },
+    );
   }
 }

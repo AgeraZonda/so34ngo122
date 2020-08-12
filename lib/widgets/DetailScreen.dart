@@ -13,12 +13,13 @@ class DetailScreen extends StatelessWidget {
   List<WhoUse> listWhoUse = new List<WhoUse>();
   // In the constructor, require a Expense.
   DetailScreen({Key key, @required this.expense}) {
+    print(expense.whoMade);
     var tagsJson = jsonDecode(expense.whoUse)['whoUse'];
     List<dynamic> tags = tagsJson != null ? List.from(tagsJson) : null;
     tags.forEach((e) {
       listWhoUse.add(WhoUse(e['name'], e['isUse']));
     });
-    print(listWhoUse.length);
+    // print(listWhoUse.length);
     listWhoUse.forEach((key) {
       listName.add(key.name);
     });
@@ -58,7 +59,7 @@ class DetailScreen extends StatelessWidget {
                 builder: (context, name, child) {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text('Người Thêm: ' + name,
+                    child: Text('Người Thêm: ' + expense.whoMade,
                         style: TextStyle(
                             fontStyle: FontStyle.italic, fontSize: 14)),
                   );

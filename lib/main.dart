@@ -82,22 +82,12 @@ class _MyAppState extends State<MyApp> {
     return Provider<String>.value(
       value: name,
       child: MaterialApp(
-        home: listExpense.length != 0
-            ? (name != ''
-                ? ExpensesScreen(
-                    expenses: listExpense,
-                    listUser: listUser,
-                    setStates: setStates)
-                : LoginScreen())
-            : Container(
-                child: Center(
-                  child: Loading(
-                      indicator: BallPulseIndicator(),
-                      size: 100.0,
-                      color: Colors.blue),
-                ),
-              ),
-      ),
+          home: (name != ''
+              ? ExpensesScreen(
+                  expenses: listExpense,
+                  listUser: listUser,
+                  setStates: setStates)
+              : LoginScreen())),
     );
   }
 }
