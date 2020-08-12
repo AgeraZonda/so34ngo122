@@ -2,16 +2,21 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:group_radio_button/group_radio_button.dart';
+import 'package:so34ngo122/models/User.dart';
 import 'package:so34ngo122/models/WhoUse.dart';
 import 'package:so34ngo122/services/DatabaseService.dart';
 import 'package:provider/provider.dart';
 
 class AddForm extends StatefulWidget {
+  final List<User> listUser;
+  AddForm(this.listUser);
   @override
-  AddFromState createState() => AddFromState();
+  AddFromState createState() => AddFromState(listUser);
 }
 
 class AddScreen extends StatelessWidget {
+  final List<User> listUser;
+  AddScreen(this.listUser);
   @override
   Widget build(BuildContext context) {
     // Use the Expense to create the UI.
@@ -19,13 +24,15 @@ class AddScreen extends StatelessWidget {
       appBar: AppBar(),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: AddForm(),
+        child: AddForm(listUser),
       ),
     );
   }
 }
 
 class AddFromState extends State<AddForm> {
+  final List<User> listUser;
+
   final _titleTextController = TextEditingController();
   final _priceTextController = TextEditingController();
   final _descriptionTextController = TextEditingController();
@@ -50,10 +57,6 @@ class AddFromState extends State<AddForm> {
 //    setState(() {
 //      _formProgress = progress;
 //    });
-  }
-
-  void _showWelcomeScreen() {
-    Navigator.pop(context);
   }
 
   Future addExpense(String title, int price, String description, String date,
@@ -81,11 +84,10 @@ class AddFromState extends State<AddForm> {
   Map<String, bool> listResult = new Map<String, bool>();
   int currentValue = 0;
   int groupId = 0;
-  AddFromState() {
-    _nickname.add('agera');
-    _nickname.add('vy');
-    _nickname.add('anh');
-    _nickname.add('duy');
+  AddFromState(this.listUser) {
+    listUser.forEach((element) {
+      _nickname.add(element.name);
+    });
     DateTime today = new DateTime.now();
     String dateSlug =
         "${today.year.toString()}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
@@ -139,6 +141,7 @@ class AddFromState extends State<AddForm> {
                 color: Colors.blue,
                 textColor: Colors.white,
                 onPressed: () async {
+                  Navigator.pop(context);
                   String a = '[';
                   int price = int.parse(_priceTextController.text);
                   int countPeople = 0;

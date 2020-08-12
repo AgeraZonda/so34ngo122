@@ -4,6 +4,8 @@ import 'package:so34ngo122/models/Expense.dart';
 import 'package:so34ngo122/services/DatabaseService.dart';
 import 'package:so34ngo122/widgets/ExpensesScreen.dart';
 
+import '../main.dart';
+
 class LoginForm extends StatefulWidget {
   @override
   LoginFromState createState() => LoginFromState();
@@ -69,7 +71,7 @@ class LoginFromState extends State<LoginForm> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ExpensesScreen(expenses: listExpense),
+                    builder: (context) => MyApp(),
                   ),
                 );
               }

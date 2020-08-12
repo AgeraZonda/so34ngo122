@@ -9,7 +9,12 @@ import 'ExpenseList.dart';
 class ExpensesScreen extends StatelessWidget {
   final List<Expense> expenses;
   final List<User> listUser;
-  ExpensesScreen({Key key, @required this.expenses, @required this.listUser})
+  final Function setStates;
+  ExpensesScreen(
+      {Key key,
+      @required this.expenses,
+      @required this.listUser,
+      @required this.setStates})
       : super(key: key);
 
   @override
@@ -19,15 +24,13 @@ class ExpensesScreen extends StatelessWidget {
           title: Text('Expenses'),
         ),
         body: ExpenseList(
-          expenses: expenses,
-          listUser: listUser,
-        ),
+            expenses: expenses, listUser: listUser, setStates: setStates),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AddScreen(),
+                builder: (context) => AddScreen(listUser),
               ),
             );
           },

@@ -68,17 +68,26 @@ class _MyAppState extends State<MyApp> {
           listUser = value;
         }));
   }
+  setStates() {
+    getListExpense().then((value) => setState(() {
+          listExpense = value;
+        }));
+    getListUser().then((value) => setState(() {
+          listUser = value;
+        }));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Provider<String>.value(
       value: name,
       child: MaterialApp(
-        home: listExpense.length != 1
-            ? (true
+        home: listExpense.length != 0
+            ? (name != ''
                 ? ExpensesScreen(
                     expenses: listExpense,
                     listUser: listUser,
-                  )
+                    setStates: setStates)
                 : LoginScreen())
             : Container(
                 child: Center(
