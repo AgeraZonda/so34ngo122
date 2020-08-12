@@ -27,11 +27,20 @@ class DatabaseService {
   }
 
   Future<void> addUser(String name, int wallet) async {
-    return await userCollection.add({
-      'name': name,
-      'wallet': wallet,
-    }).catchError((error) => print("Failed to add user: $error"));
-    ;
+    var documentID = 'hello';
+    await userCollection.getDocuments().then((querySnapshot) {
+      querySnapshot.documents.forEach((result) {
+        if (result.data['name'] == name) {
+          documentID = result.documentID;
+        }
+      });
+    });
+    if (documentID == 'hello')
+      return await userCollection.add({
+        'name': name,
+        'wallet': wallet,
+      }).catchError((error) => print("Failed to add user: $error"));
+    return null;
   }
 
   Future<void> editUserWallet(String name, int wallet) async {
